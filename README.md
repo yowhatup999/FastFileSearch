@@ -6,10 +6,11 @@ FastFileSearch is a high-performance Python script that searches for a specific 
 - Parallel processing using up to 4 CPU cores.
 - Automatic search termination upon finding the file.
 - Robust error handling for permission and system errors.
+- Command line argument support: Specify the file name when running the script.
 
 ## How to Use
 ```bash
-python fast_file_search.py
+python fast_file_search.py [fileName]
 ```
 
 ## System Requirements
@@ -37,7 +38,7 @@ pip install -r requirements.txt
 
 4. Run the script:
 ```bash
-python fast_file_search.py
+python fast_file_search.py [fileName]
 ```
 
 ## License
