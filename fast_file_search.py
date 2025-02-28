@@ -4,22 +4,25 @@ Dateisuche auf allen verfügbaren Festplatten mit paralleler Verarbeitung.
 Dieses Skript sucht nach einer spezifischen Datei auf allen verfügbaren Laufwerken
 im System und beendet die Suche automatisch, sobald die Datei gefunden wurde.
 
+Usage:
+    python fast_file_search.py [fileName]
+
 Author: Yo
 Date: 28.02.2025
 """
 
 import os
+import sys
 import multiprocessing
 import time
 
-searchName = "GTA5.exe"
 
-
-def searchDrive(drive: str, stopEvent: multiprocessing.Event) -> None:
+def searchDrive(drive: str, searchName: str, stopEvent: multiprocessing.Event) -> None:
     """
     Durchsucht ein angegebenes Laufwerk rekursiv nach der gewünschten Datei.
 
     :param drive: Der Laufwerksbuchstabe (z. B. 'C:\\').
+    :param searchName: Der Name der zu suchenden Datei.
     :param stopEvent: Gemeinsames Event, um alle Prozesse beim Fund zu stoppen.
     """
     print(f"Starte Suche auf Laufwerk: {drive}")
@@ -58,10 +61,12 @@ def getDrives() -> list:
     return drives
 
 
-def startSearch():
+def startSearch(searchName: str):
     """
     Startet die parallele Suche auf allen verfügbaren Laufwerken
     und bricht die Suche sofort ab, wenn die Datei gefunden wurde.
+
+    :param searchName: Der Name der zu suchenden Datei.
     """
     startTime = time.time()
     drives = getDrives()
@@ -73,10 +78,15 @@ def startSearch():
 
         # Parallele Verarbeitung mit maximal 4 Prozessen
         with multiprocessing.Pool(processes=4) as pool:
-            pool.starmap(searchDrive, [(drive, stopEvent) for drive in drives])
+            pool.starmap(searchDrive, [(drive, searchName, stopEvent) for drive in drives])
 
     print(f"Suchdauer: {time.time() - startTime:.2f} Sekunden")
 
 
 if __name__ == "__main__":
-    startSearch()
+    if len(sys.argv) < 2:
+        print("Usage: python fast_file_search.py [fileName]")
+        sys.exit(1)
+
+    searchName = sys.argv[1]
+    startSearch(searchName)
